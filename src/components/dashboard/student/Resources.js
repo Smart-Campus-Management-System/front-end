@@ -1,0 +1,133 @@
+import React, { useState } from "react";
+import Sidebar from "../Sidebar";
+
+const communities = [
+  { id: 1, name: "C++ Community", subject: "C++" },
+  { id: 2, name: "Maths Community", subject: "Maths" },
+  { id: 3, name: "Physics Community", subject: "Physics" },
+  { id: 4, name: "JavaScript Community", subject: "JavaScript" },
+];
+
+const sampleMessages = {
+  "C++": [
+    { user: "Student1", content: "Hello, any resources for C++ assignments?" },
+    { user: "Student2", content: "You can check out the C++ Primer book." },
+  ],
+  "Maths": [
+    { user: "Student3", content: "Does anyone understand the latest math problem?" },
+    { user: "Student4", content: "I think the answer is in the tutorial notes." },
+  ],
+  "Physics": [
+    { user: "Student5", content: "How to approach the energy conservation problem?" },
+  ],
+  "JavaScript": [
+    { user: "Student6", content: "Can someone explain closures?" },
+    { user: "Student7", content: "Closures are functions that retain access to their scope." },
+  ],
+};
+
+export default function Community() {
+  const [selectedCommunity, setSelectedCommunity] = useState(null);
+  const [messageContent, setMessageContent] = useState("");
+  const [messages, setMessages] = useState([]);
+  const [searchQuery, setSearchQuery] = useState(""); // State for search query
+
+  const handleSelectCommunity = (community) => {
+    setSelectedCommunity(community);
+    setMessages(sampleMessages[community.subject] || []);
+  };
+
+  const handleSendMessage = () => {
+    if (messageContent.trim() === "") return;
+
+    const newMessage = { user: "Current Student", content: messageContent };
+    setMessages([...messages, newMessage]);
+    setMessageContent("");
+  };
+
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value.toLowerCase());
+  };
+
+  const filteredCommunities = communities.filter((community) =>
+    community.name.toLowerCase().includes(searchQuery)
+  );
+
+  return (
+    <div className="flex min-h-screen bg-gray-100 flex min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-700 text-white">
+      {/* Sidebar */}
+      <div className="fixed top-0 left-0 w-64 h-screen bg-richblue-800 border-r border-richblack-700">
+        <Sidebar />
+      </div>
+
+      {/* Community Content */}
+      <div className="flex-1 ml-64 p-8 overflow-y-auto">
+        <h1 className="text-4xl font-bold text-white-800 mb-6">Community</h1>
+
+        {/* Search Bar */}
+        <div className="mb-6">
+          <input
+            type="text"
+            placeholder="Search communities..."
+            value={searchQuery}
+            onChange={handleSearchChange}
+            className="w-full border text-black border-gray-300 rounded-lg p-3 placeholder-gray-600"
+          />
+        </div>
+
+        {/* Community List */}
+        <div className="bg-white p-6 rounded-lg shadow mb-8">
+          <h2 className="text-2xl font-bold text-black mb-4">Your Communities</h2>
+          <ul>
+            {filteredCommunities.map((community) => (
+              <li
+                key={community.id}
+                className="bg-gray-200 p-4 mb-4 rounded cursor-pointer border-r border-richblack-500 hover:bg-blue-100 text-black"
+                onClick={() => handleSelectCommunity(community)}
+              >
+                {community.name}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Selected Community */}
+        {selectedCommunity && (
+          <div className="bg-white p-6 rounded-lg shadow mb-8 text-black">
+            <h2 className="text-2xl font-bold text-black mb-4">
+              {selectedCommunity.name}
+            </h2>
+            <p className="text-black mb-6">
+              Welcome to the {selectedCommunity.subject} community! Discuss and share your thoughts here.
+            </p>
+
+            {/* Chat Section */}
+            <div className="bg-gray-200 p-4 rounded mb-4 h-64 overflow-y-auto text-black">
+              {messages.map((message, index) => (
+                <div key={index} className="mb-2">
+                  <strong className="text-black">{message.user}:</strong>
+                  <span className="text-black ml-2">{message.content}</span>
+                </div>
+              ))}
+            </div>
+
+            {/* Message Input */}
+            <textarea
+              className="w-full p-4 mb-4 border rounded text-black"
+              rows="3"
+              placeholder="Type your message here..."
+              value={messageContent}
+              onChange={(e) => setMessageContent(e.target.value)}
+            ></textarea>
+            <button
+              onClick={handleSendMessage}
+              className="bg-green-500 text-white px-4 py-2 rounded-full hover:bg-green-600"
+            >
+              Send Message
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
