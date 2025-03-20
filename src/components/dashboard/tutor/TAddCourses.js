@@ -10,10 +10,10 @@ export default function TAddCourses() {
   const [formData, setFormData] = useState(() => {
     const savedData = localStorage.getItem("courseFormData");
     const selectedSection = localStorage.getItem("selectedSection");
-    
+
     return savedData
-      ? JSON.parse(savedData)
-      : {
+        ? JSON.parse(savedData)
+        : {
           courseName: "",
           category: "",
           courseDescription: "",
@@ -89,17 +89,17 @@ export default function TAddCourses() {
       const userId = payload.id;
 
       const response = await axios.post(
-        "http://localhost:4000/api/v1/courses/add",
-        { ...formData, tutor: userId },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+          "http://localhost:4000/api/v1/courses/add",
+          { ...formData, tutor: userId },
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
       );
 
       if (response.status === 201) {
         setMessage({ type: "success", text: "Course added successfully!" });
         localStorage.removeItem("courseFormData");
-        localStorage.removeItem("selectedSection"); 
+        localStorage.removeItem("selectedSection");
         setFormData({
           courseName: "",
           category: "",
@@ -121,75 +121,149 @@ export default function TAddCourses() {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-100 flex min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-700 text-white">
-      <div className="fixed top-0 left-0 w-64 h-screen bg-richblue-800 border-r border-richblack-700">
-        <Sidebar />
+      <div className="flex min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-700 text-white">
+        {/* Sidebar */}
+        <div className="fixed top-0 left-0 w-64 h-screen bg-richblue-800 border-r border-richblack-700">
+          <Sidebar />
+        </div>
+
+        {/* Main Content */}
+        <div className="flex-1 ml-64 p-8 overflow-y-auto">
+          <h1 className="text-3xl font-bold text-white mb-6">Add New Course</h1>
+
+          {message && (
+              <div
+                  className={`p-4 mb-6 rounded-lg ${
+                      message.type === "success"
+                          ? "bg-green-800/50 text-green-200 border border-green-500/30"
+                          : "bg-red-800/50 text-red-200 border border-red-500/30"
+                  }`}
+              >
+                {message.text}
+              </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="bg-gray-800/70 p-6 rounded-lg shadow-lg border border-cyan-500/20 space-y-6">
+            <div>
+              <label className="block text-cyan-300 font-medium mb-2">Course Name</label>
+              <input
+                  type="text"
+                  name="courseName"
+                  value={formData.courseName}
+                  onChange={handleChange}
+                  required
+                  className="w-full border border-gray-600 bg-gray-700/80 text-white rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+              />
+            </div>
+
+            <div>
+              <label className="block text-cyan-300 font-medium mb-2">Category</label>
+              <input
+                  type="text"
+                  name="category"
+                  value={formData.category}
+                  onChange={handleChange}
+                  required
+                  className="w-full border border-gray-600 bg-gray-700/80 text-white rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+              />
+            </div>
+
+            <div>
+              <label className="block text-cyan-300 font-medium mb-2">Description</label>
+              <textarea
+                  name="courseDescription"
+                  value={formData.courseDescription}
+                  onChange={handleChange}
+                  className="w-full border border-gray-600 bg-gray-700/80 text-white rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                  rows="4"
+              />
+            </div>
+
+            <div>
+              <label className="block text-cyan-300 font-medium mb-2">What You Will Learn</label>
+              <textarea
+                  name="whatYouWillLearn"
+                  value={formData.whatYouWillLearn}
+                  onChange={handleChange}
+                  className="w-full border border-gray-600 bg-gray-700/80 text-white rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                  rows="4"
+              />
+            </div>
+
+            <div>
+              <label className="block text-cyan-300 font-medium mb-2">Thumbnail</label>
+              <input
+                  type="file"
+                  accept="image/*"
+                  onChange={uploadThumbnail}
+                  className="w-full border border-gray-600 bg-gray-700/80 text-white rounded-lg p-3"
+              />
+              {uploading && <p className="text-cyan-200 mt-2">Uploading...</p>}
+              {formData.thumbnail && (
+                  <div className="mt-4">
+                    <img
+                        src={formData.thumbnail}
+                        alt="Thumbnail Preview"
+                        className="w-32 h-32 object-cover rounded-lg border border-cyan-500/30"
+                    />
+                  </div>
+              )}
+            </div>
+
+            <div>
+              <label className="block text-cyan-300 font-medium mb-2">Tags (comma-separated)</label>
+              <input
+                  type="text"
+                  name="tag"
+                  value={formData.tag}
+                  onChange={handleChange}
+                  required
+                  className="w-full border border-gray-600 bg-gray-700/80 text-white rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+              />
+            </div>
+
+            <div>
+              <label className="block text-cyan-300 font-medium mb-2">Instructions</label>
+              <textarea
+                  name="instructions"
+                  value={formData.instructions}
+                  onChange={handleChange}
+                  className="w-full border border-gray-600 bg-gray-700/80 text-white rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                  rows="4"
+              />
+            </div>
+
+            <div>
+              <label className="block text-cyan-300 font-medium mb-2">Status</label>
+              <select
+                  name="status"
+                  value={formData.status}
+                  onChange={handleChange}
+                  className="w-full border border-gray-600 bg-gray-700/80 text-white rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+              >
+                <option value="Draft">Draft</option>
+                <option value="Published">Published</option>
+              </select>
+            </div>
+
+            <div className="flex flex-wrap gap-4 pt-4">
+              <button
+                  onClick={handleRedirect}
+                  type="button"
+                  className="px-6 py-3 bg-green-600 text-white font-bold rounded-lg shadow hover:bg-green-700 focus:ring-2 focus:ring-green-500 focus:outline-none transition-colors duration-200"
+              >
+                Add Sections
+              </button>
+
+              <button
+                  type="submit"
+                  className="px-6 py-3 bg-cyan-600 text-white font-bold rounded-lg shadow hover:bg-cyan-700 focus:ring-2 focus:ring-cyan-500 focus:outline-none transition-colors duration-200"
+              >
+                Create Course
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
-
-      <div className="flex-1 ml-64 p-8 overflow-y-auto">
-        <h1 className="text-3xl font-bold text-white-800 mb-4">Add New Course</h1>
-
-        {message && (
-          <div className={`p-4 mb-4 rounded ${message.type === "success" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>
-            {message.text}
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md space-y-4">
-          <div>
-            <label className="block text-gray-700 font-bold mb-2">Course Name</label>
-            <input type="text" name="courseName" value={formData.courseName} onChange={handleChange} required className="w-full border border-gray-300 rounded-lg p-3" />
-          </div>
-
-          <div>
-            <label className="block text-gray-700 font-bold mb-2">Category</label>
-            <input type="text" name="category" value={formData.category} onChange={handleChange} required className="w-full border border-gray-300 rounded-lg p-3" />
-          </div>
-
-          <div>
-            <label className="block text-gray-700 font-bold mb-2">Description</label>
-            <textarea name="courseDescription" value={formData.courseDescription} onChange={handleChange} className="w-full border border-gray-300 rounded-lg p-3" />
-          </div>
-
-          <div>
-            <label className="block text-gray-700 font-bold mb-2">What You Will Learn</label>
-            <textarea name="whatYouWillLearn" value={formData.whatYouWillLearn} onChange={handleChange} className="w-full border border-gray-300 rounded-lg p-3" />
-          </div>
-
-          <div>
-            <label className="block text-gray-700 font-bold mb-2">Thumbnail</label>
-            <input type="file" accept="image/*" onChange={uploadThumbnail} className="w-full border border-gray-300 rounded-lg p-3" />
-            {uploading && <p className="text-gray-600">Uploading...</p>}
-            {formData.thumbnail && <img src={formData.thumbnail} alt="Thumbnail Preview" className="w-32 h-32 object-cover rounded-lg mt-4" />}
-          </div>
-
-          <div>
-            <label className="block text-gray-700 font-bold mb-2">Tags (comma-separated)</label>
-            <input type="text" name="tag" value={formData.tag} onChange={handleChange} required className="w-full border border-gray-300 rounded-lg p-3" />
-          </div>
-
-          <div>
-            <label className="block text-gray-700 font-bold mb-2">Instructions</label>
-            <textarea name="instructions" value={formData.instructions} onChange={handleChange} className="w-full border border-gray-300 rounded-lg p-3" />
-          </div>
-
-          <button onClick={handleRedirect} className="mt-6 px-6 py-3 bg-green-600 text-white font-bold rounded-lg shadow hover:bg-green-700 focus:ring-2 focus:ring-green-500 focus:outline-none">
-            Add Sections
-          </button>
-
-          <div>
-            <label className="block text-gray-700 font-bold mb-2">Status</label>
-            <select name="status" value={formData.status} onChange={handleChange} className="w-full border border-gray-300 rounded-lg p-3">
-              <option value="Draft">Draft</option>
-              <option value="Published">Published</option>
-            </select>
-          </div>
-
-          <button type="submit" className="px-6 py-3 bg-blue-600 text-white font-bold rounded-lg shadow hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:outline-none">
-            Create Course
-          </button>
-        </form>
-      </div>
-    </div>
   );
 }

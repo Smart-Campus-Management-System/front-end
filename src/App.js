@@ -45,6 +45,7 @@ import TAddSection from './components/dashboard/tutor/TAddSection';
 import TAddNewSection from './components/dashboard/tutor/TAddNewSection';
 import TNotification from './components/dashboard/tutor/TNotification';
 import TSection from './components/dashboard/tutor/TSection'
+import PasswordReset from "./components/PasswordReset";
 
 function App() {
   return (
@@ -140,6 +141,7 @@ function App() {
           path="/dashboard/admin/Pages/ListTutor"
           element={<ListTutor />}
         />
+        <Route path="/reset-password" element={<PasswordReset />} />
       </Routes>
     </Router>
   );
